@@ -19,13 +19,13 @@
 }
 
 .counties {
-  fill: none;
+	fill: none;
 }
 
 .states {
-  fill: none;
-  stroke: lightgray;
-  stroke-linejoin: round;
+	fill: none;
+	stroke: lightgray;
+	stroke-linejoin: round;
 }
 
 .county {
