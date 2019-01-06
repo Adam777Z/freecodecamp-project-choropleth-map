@@ -75,16 +75,16 @@ Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then(fun
 	const h = 600;
 
 	const path = d3.geoPath();
-	
+
 	const tooltip = d3.select('body')
 									.append('div')
 									.attr('id', 'tooltip');
-	
+
 	const svg = d3.select('#canvas')
 								.append('svg')
 								.attr('width', w)
 								.attr('height', h);
-	
+
 	const colorScale = d3.scaleThreshold()
 												.domain((function(min, max, count) {
 													let array = [];
@@ -96,18 +96,18 @@ Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then(fun
 													return array;
 												})(d3.min(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.max(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.schemeGreens[9].length))
 												.range(d3.schemeGreens[9]);
-	
+
 	const legendScale = d3.scaleLinear()
 												.domain(d3.extent(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])))
 												.range([0, (w / 2.5)]);
-	
+
 	const legendScaleAxis = d3.axisBottom(legendScale)
 														.tickValues(colorScale.domain());
-	
+
 	const legend = svg.append('g')
 		.attr('id', 'legend')
 		.attr('transform', 'translate(' + (w / 2.3) + ', 0)');
-	
+
 	legend.append('g')
 				.selectAll('rect')
 				.data(colorScale.range().map(function(color) {
@@ -123,21 +123,21 @@ Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then(fun
 				.attr('y', 16)
 				.attr('width', (d, i) => legendScale(d[1]) - legendScale(d[0]))
 				.attr('height', (d, i) => 20);
-	
+
 	legend.append('g')
 				.attr('transform', 'translate(0, 36)')
 				.call(legendScaleAxis);
-	
+
 	legend.append('text')             
 			.attr('transform', 'translate(' + (w / 5) + ', 11)')
 			.style('text-anchor', 'middle')
 			.text('Attainment (%)');
-	
+
 	svg.append('path')
 		.datum(topojson.mesh(CountyData, CountyData['objects']['states'], (a, b) => a !== b))
 		.attr('class', 'states')
 		.attr('d', path);
-	
+
 	svg.append('g')
 			.attr('class', 'counties')
 			.selectAll('path')
