@@ -3,7 +3,7 @@ localStorage.setItem('example_project', 'D3: Choropleth');
 
 document.addEventListener('DOMContentLoaded', function(event) {
 	const CountyDataURL = 'https://raw.githubusercontent.com/freeCodeCamp/testable-projects-fcc/main/src/data/choropleth_map/counties.json';
-	const EducationDataURL = 'https://raw.githubusercontent.com/freeCodeCamp/testable-projects-fcc/main/src/data/choropleth_map/for_user_education.json';
+	const EducationDataURL = 'https://raw.githubusercontent.com/freeCodeCamp/testable-projects-fcc/main/src/data/choropleth_map/education.json';
 
 	Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then(function(data) {
 		const CountyData = data[0];
