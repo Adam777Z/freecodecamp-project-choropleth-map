@@ -78,84 +78,84 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		const path = d3.geoPath();
 
 		const tooltip = d3.select('body')
-										.append('div')
-										.attr('id', 'tooltip');
+								.append('div')
+								.attr('id', 'tooltip');
 
 		const svg = d3.select('#canvas')
-									.append('svg')
-									.attr('width', w)
-									.attr('height', h);
+								.append('svg')
+								.attr('width', w)
+								.attr('height', h);
 
 		const colorScale = d3.scaleThreshold()
-													.domain((function(min, max, count) {
-														let array = [];
-														let step = (max-min) / count;
-														let base = min;
-														for (let i = 1; i < count; i++) {
-															array.push(base + (i * step));
-														}
-														return array;
-													})(d3.min(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.max(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.schemeGreens[9].length))
-													.range(d3.schemeGreens[9]);
+								.domain((function(min, max, count) {
+									let array = [];
+									let step = (max-min) / count;
+									let base = min;
+									for (let i = 1; i < count; i++) {
+										array.push(base + (i * step));
+									}
+									return array;
+								})(d3.min(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.max(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])), d3.schemeGreens[9].length))
+								.range(d3.schemeGreens[9]);
 
 		const legendScale = d3.scaleLinear()
-													.domain(d3.extent(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])))
-													.range([0, (w / 2.5)]);
+								.domain(d3.extent(Object.keys(EducationData).map(d => EducationData[d]['bachelorsOrHigher'])))
+								.range([0, (w / 2.5)]);
 
 		const legendScaleAxis = d3.axisBottom(legendScale)
-															.tickValues(colorScale.domain());
+								.tickValues(colorScale.domain());
 
 		const legend = svg.append('g')
-			.attr('id', 'legend')
-			.attr('transform', 'translate(' + (w / 2.3) + ', 0)');
+								.attr('id', 'legend')
+								.attr('transform', 'translate(' + (w / 2.3) + ', 0)');
 
 		legend.append('g')
-					.selectAll('rect')
-					.data(colorScale.range().map(function(color) {
-						let d = colorScale.invertExtent(color);
-						if (d[0] == null) { d[0] = legendScale.domain()[0]; };
-						if (d[1] == null) { d[1] = legendScale.domain()[1]; };
-						return d;
-					}))
-					.enter()
-					.append('rect')
-					.attr('fill', (d, i) => colorScale(d[0]))
-					.attr('x', (d, i) => legendScale(d[0]))
-					.attr('y', 16)
-					.attr('width', (d, i) => legendScale(d[1]) - legendScale(d[0]))
-					.attr('height', (d, i) => 20);
+		.selectAll('rect')
+		.data(colorScale.range().map(function(color) {
+			let d = colorScale.invertExtent(color);
+			if (d[0] == null) { d[0] = legendScale.domain()[0]; };
+			if (d[1] == null) { d[1] = legendScale.domain()[1]; };
+			return d;
+		}))
+		.enter()
+		.append('rect')
+		.attr('fill', (d, i) => colorScale(d[0]))
+		.attr('x', (d, i) => legendScale(d[0]))
+		.attr('y', 16)
+		.attr('width', (d, i) => legendScale(d[1]) - legendScale(d[0]))
+		.attr('height', (d, i) => 20);
 
 		legend.append('g')
-					.attr('transform', 'translate(0, 36)')
-					.call(legendScaleAxis);
+		.attr('transform', 'translate(0, 36)')
+		.call(legendScaleAxis);
 
 		legend.append('text')
-				.attr('transform', 'translate(' + (w / 5) + ', 11)')
-				.style('text-anchor', 'middle')
-				.text('Attainment (%)');
+		.attr('transform', 'translate(' + (w / 5) + ', 11)')
+		.style('text-anchor', 'middle')
+		.text('Attainment (%)');
 
 		svg.append('path')
-			.datum(topojson.mesh(CountyData, CountyData['objects']['states'], (a, b) => a !== b))
-			.attr('class', 'states')
-			.attr('d', path);
+		.datum(topojson.mesh(CountyData, CountyData['objects']['states'], (a, b) => a !== b))
+		.attr('class', 'states')
+		.attr('d', path);
 
 		svg.append('g')
-				.attr('class', 'counties')
-				.selectAll('path')
-				.data(topojson.feature(CountyData, CountyData['objects']['counties']).features)
-				.enter()
-				.append('path')
-				.attr('class', 'county')
-				.attr('d', path)
-				// .attr('fill', (d) => colorScale(EducationData.find(e => e['fips'] == d['id'])['bachelorsOrHigher']))
-				.attr('fill', (d) => colorScale(EducationData[d['id']]['bachelorsOrHigher']))
-				.attr('data-fips', (d) => d['id'])
-				// .attr('data-education', (d) => EducationData.find(e => e['fips'] == d['id'])['bachelorsOrHigher'])
-				.attr('data-education', (d) => EducationData[d['id']]['bachelorsOrHigher'])
-				// .append('title')
-				// .text((d) => States[EducationData[d['id']]['state']] + ': ' + EducationData[d['id']]['area_name'] + ': ' + EducationData[d['id']]['bachelorsOrHigher'] + '%')
-				.on('mouseover', (d) => tooltip.style('display', 'block').attr('data-education', EducationData[d['id']]['bachelorsOrHigher']).text(States[EducationData[d['id']]['state']] + ': ' + EducationData[d['id']]['area_name'] + ': ' + EducationData[d['id']]['bachelorsOrHigher'] + '%'))
-				.on('mousemove', () => tooltip.style('top', (d3.event.pageY - 35) + 'px').style('left', (d3.event.pageX + 5) + 'px'))
-				.on('mouseout', () => tooltip.style('display', 'none'));
+		.attr('class', 'counties')
+		.selectAll('path')
+		.data(topojson.feature(CountyData, CountyData['objects']['counties']).features)
+		.enter()
+		.append('path')
+		.attr('class', 'county')
+		.attr('d', path)
+		// .attr('fill', (d) => colorScale(EducationData.find(e => e['fips'] == d['id'])['bachelorsOrHigher']))
+		.attr('fill', (d) => colorScale(EducationData[d['id']]['bachelorsOrHigher']))
+		.attr('data-fips', (d) => d['id'])
+		// .attr('data-education', (d) => EducationData.find(e => e['fips'] == d['id'])['bachelorsOrHigher'])
+		.attr('data-education', (d) => EducationData[d['id']]['bachelorsOrHigher'])
+		// .append('title')
+		// .text((d) => States[EducationData[d['id']]['state']] + ': ' + EducationData[d['id']]['area_name'] + ': ' + EducationData[d['id']]['bachelorsOrHigher'] + '%')
+		.on('mouseover', (d) => tooltip.style('display', 'block').attr('data-education', EducationData[d['id']]['bachelorsOrHigher']).text(States[EducationData[d['id']]['state']] + ': ' + EducationData[d['id']]['area_name'] + ': ' + EducationData[d['id']]['bachelorsOrHigher'] + '%'))
+		.on('mousemove', () => tooltip.style('top', (d3.event.pageY - 35) + 'px').style('left', (d3.event.pageX + 5) + 'px'))
+		.on('mouseout', () => tooltip.style('display', 'none'));
 	});
 });
