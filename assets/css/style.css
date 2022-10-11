@@ -1,7 +1,3 @@
-.jumbotron {
-	margin-top: 2rem;
-}
-
 #tooltip {
 	display: none;
 	position: absolute;
@@ -10,11 +6,6 @@
 	color: white;
 	background-color: #505050;
 	padding: 5px 8px;
-	border-radius: .3rem;
-}
-
-#canvas {
-	background-color: #e9ecef;
 	border-radius: .3rem;
 }
 
