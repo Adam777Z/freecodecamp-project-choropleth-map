@@ -1,11 +1,11 @@
 const projectName = 'choropleth';
 localStorage.setItem('example_project', 'D3: Choropleth');
 
-document.addEventListener('DOMContentLoaded', function(event) {
+document.addEventListener('DOMContentLoaded', (event) => {
 	const CountyDataURL = './assets/json/counties.json';
 	const EducationDataURL = './assets/json/education.json';
 
-	Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then(function(data) {
+	Promise.all([CountyDataURL, EducationDataURL].map(url => d3.json(url))).then((data) => {
 		const CountyData = data[0];
 		const EducationData = {};
 		data[1].forEach(e => { EducationData[e['fips']] = e; delete EducationData[e['fips']]['fips']; })
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 								.attr('height', h);
 
 		const colorScale = d3.scaleThreshold()
-								.domain((function(min, max, count) {
+								.domain(((min, max, count) => {
 									let array = [];
 									let step = (max-min) / count;
 									let base = min;
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 		legend.append('g')
 		.selectAll('rect')
-		.data(colorScale.range().map(function(color) {
+		.data(colorScale.range().map((color) => {
 			let d = colorScale.invertExtent(color);
 			if (d[0] == null) { d[0] = legendScale.domain()[0]; };
 			if (d[1] == null) { d[1] = legendScale.domain()[1]; };
